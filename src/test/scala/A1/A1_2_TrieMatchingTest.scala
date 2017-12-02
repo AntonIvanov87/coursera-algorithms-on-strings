@@ -1,5 +1,7 @@
+package A1
+
+import A1.A1_2_TrieMatching._
 import org.scalatest.FunSuite
-import A1_2_TrieMatching._
 
 class A1_2_TrieMatchingTest extends FunSuite {
 

@@ -1,3 +1,5 @@
+package A1
+
 import scala.collection.mutable
 
 class SuffixTrie(text: String) {

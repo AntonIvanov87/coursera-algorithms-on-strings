@@ -1,3 +1,5 @@
+package A1
+
 
 class Trie(patterns: Seq[String]) {
   import Trie._

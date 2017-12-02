@@ -1,12 +1,12 @@
+package A1
+
 import java.util.concurrent.atomic.LongAdder
 
-import A1_2_TrieMatching._
+import A1.A1_2_TrieMatching._
 import org.scalacheck.Gen
-import org.scalactic.anyvals.PosInt
-import org.scalatest.FunSuite
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import util.TestBase
 
-class A1_3_ExtendTrieMatchingTest extends FunSuite with GeneratorDrivenPropertyChecks {
+class A1_3_ExtendTrieMatchingTest extends TestBase {
 
   test("text AA, pattern T") {
     val patternToIndexes = getPatternToIndexes("AA", Seq("T"))
@@ -24,13 +24,10 @@ class A1_3_ExtendTrieMatchingTest extends FunSuite with GeneratorDrivenPropertyC
   }
 
   test("check") {
-    implicit val generatorDrivenConfig: PropertyCheckConfiguration = PropertyCheckConfiguration(
-      minSuccessful = 1000,
-      workers = PosInt.from(Runtime.getRuntime.availableProcessors).get
-    )
+    implicit val generatorDrivenConfig: PropertyCheckConfiguration = propCheckConfig(1000)
 
-    val textGen = Tests.textGen(10000)
-    val patternGen = Tests.textGen(100)
+    val textGen = TestBase.textGen(10000)
+    val patternGen = TestBase.textGen(100)
 
     val patternsGen: Gen[List[String]] = for {
       size <- Gen.choose(1, 5000)
@@ -39,10 +36,7 @@ class A1_3_ExtendTrieMatchingTest extends FunSuite with GeneratorDrivenPropertyC
 
     val iteration = new LongAdder
     val totalTimeMillis = new LongAdder
-    forAll((textGen, "text"), (patternsGen, "patterns")) { (genedText: String, genedPatterns: List[String]) =>
-      val text = Tests.filterGened(genedText)
-      val patterns = genedPatterns.map(Tests.filterGened)
-
+    forAll((textGen, "text"), (patternsGen, "patterns")) { (text: String, patterns: List[String]) =>
       val start = System.currentTimeMillis
 
       val patternsToIndexes = getPatternToIndexes(text, patterns)

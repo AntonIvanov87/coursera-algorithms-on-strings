@@ -1,11 +1,11 @@
+package A1
+
 import java.util.concurrent.atomic.LongAdder
 
-import A1_5_ShortestSubstring.shortestSubstringOfANotInB
-import org.scalactic.anyvals.PosInt
-import org.scalatest.FunSuite
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import A1.A1_5_ShortestSubstring.shortestSubstringOfANotInB
+import util.TestBase
 
-class A1_5_ShortestSubstringTest extends FunSuite with GeneratorDrivenPropertyChecks {
+class A1_5_ShortestSubstringTest extends TestBase {
 
   test("A A") {
     assert(shortestSubstringOfANotInB("A", "A") === None)
@@ -38,19 +38,12 @@ class A1_5_ShortestSubstringTest extends FunSuite with GeneratorDrivenPropertyCh
   }
 
   test("check") {
-    implicit val generatorDrivenConfig: PropertyCheckConfiguration = PropertyCheckConfiguration(
-      minSuccessful = 10000,
-      workers = PosInt.from(Runtime.getRuntime.availableProcessors).get
-    )
-
-    val textGen = Tests.textGen(2000)
+    implicit val generatorDrivenConfig: PropertyCheckConfiguration = propCheckConfig(1000)
+    val textGen = TestBase.textGen(2000)
 
     val iteration = new LongAdder
     val totalTimeMillis = new LongAdder
-    forAll((textGen, "text A"), (textGen, "text B")) { (genedA: String, genedB: String) =>
-      val textA = Tests.filterGened(genedA)
-      val textB = Tests.filterGened(genedB)
-
+    forAll((textGen, "text A"), (textGen, "text B")) { (textA: String, textB: String) =>
       val start = System.currentTimeMillis
 
       val shortestOption = shortestSubstringOfANotInB(textA, textB)

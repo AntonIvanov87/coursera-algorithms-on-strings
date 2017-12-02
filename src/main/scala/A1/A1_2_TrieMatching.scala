@@ -1,3 +1,5 @@
+package A1
+
 import scala.collection.mutable
 
 object A1_2_TrieMatching {

@@ -1,11 +1,11 @@
+package A1
+
 import java.util.concurrent.atomic.LongAdder
 
-import A1_4_SuffixTrie._
-import org.scalactic.anyvals.PosInt
-import org.scalatest.FunSuite
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import A1.A1_4_SuffixTrie._
+import util.TestBase
 
-class A1_4_SuffixTrieTest extends FunSuite with GeneratorDrivenPropertyChecks {
+class A1_4_SuffixTrieTest extends TestBase {
 
   test("$") {
     val suffixTrie = new SuffixTrie("$")
@@ -57,17 +57,14 @@ class A1_4_SuffixTrieTest extends FunSuite with GeneratorDrivenPropertyChecks {
   }
 
   test("check") {
-    implicit val generatorDrivenConfig: PropertyCheckConfiguration = PropertyCheckConfiguration(
-      minSuccessful = 1000,
-      workers = PosInt.from(Runtime.getRuntime.availableProcessors).get
-    )
+    implicit val generatorDrivenConfig: PropertyCheckConfiguration = propCheckConfig(1000)
 
-    val textGen = Tests.textGen(5000)
+    val textGen = TestBase.textGen(5000)
 
     val iteration = new LongAdder
     val totalTimeMillis = new LongAdder
     forAll((textGen, "text")) { (genedText: String) =>
-      val text = Tests.filterGened(genedText) + '$'
+      val text = genedText + '$'
 
       val start = System.currentTimeMillis
 

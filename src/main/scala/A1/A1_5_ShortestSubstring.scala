@@ -1,3 +1,5 @@
+package A1
+
 object A1_5_ShortestSubstring {
 
   def shortestSubstringOfANotInB(textA: String, textB: String): Option[String] = {

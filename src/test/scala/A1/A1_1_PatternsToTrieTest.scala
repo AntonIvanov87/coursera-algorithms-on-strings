@@ -1,5 +1,7 @@
+package A1
+
+import A1.A1_1_PatternsToTrie._
 import org.scalatest.FunSuite
-import A1_1_PatternsToTrie._
 
 class A1_1_PatternsToTrieTest extends FunSuite {
 
