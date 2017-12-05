@@ -2,7 +2,7 @@ package A1
 
 import scala.collection.mutable
 
-object A1_2_TrieMatching {
+private object A1_2_TrieMatching {
 
   def getPatternToIndexes(text: String, patterns: Seq[String]): Map[String, Set[Int]] = {
     val trie = Trie(patterns: _*)

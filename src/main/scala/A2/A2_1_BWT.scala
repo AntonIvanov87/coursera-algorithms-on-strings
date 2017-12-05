@@ -13,14 +13,16 @@ object A2_1_BWT {
 
     util.Arrays.sort(startIndices, new Comparator[Integer] {
       override def compare(i1: Integer, i2: Integer): Int = {
-        for (offset <- startIndices.indices) {
-          val ch1 = text((i1 + offset) % startIndices.length)
-          val ch2 = text((i2 + offset) % startIndices.length)
+        var offset = 0
+        while (offset < startIndices.length) {
+          val ch1 = text.charAt((i1 + offset) % startIndices.length)
+          val ch2 = text.charAt((i2 + offset) % startIndices.length)
           if (ch1 < ch2) {
             return -1
           } else if (ch1 > ch2) {
             return 1
           }
+          offset+=1
         }
         0
       }

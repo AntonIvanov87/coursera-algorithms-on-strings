@@ -2,7 +2,7 @@ package A1
 
 import scala.collection.mutable
 
-object A1_4_SuffixTrie {
+private object A1_4_SuffixTrie {
 
   def suffixTrieToEdges(suffixTrie: SuffixTrie): Seq[String] = {
     val queueOfNodes = mutable.Queue(suffixTrie.rootNode)

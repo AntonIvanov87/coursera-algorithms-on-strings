@@ -1,9 +1,10 @@
 package A1
 
+import common.BaseCodec
+
 import scala.collection.mutable
 
 class SuffixTrie(text: String) {
-  import SuffixTrie._
 
   val rootNode = new Node
   private val textBytes = BaseCodec.toBytes(text)
@@ -121,44 +122,6 @@ class SuffixTrie(text: String) {
       newNode.add(Edge(fromIndex + offset, toIndex, nextNode))
       Edge(fromIndex, fromIndex + offset - 1, newNode)
     }
-  }
-
-}
-
-private object SuffixTrie {
-
-  private object BaseCodec {
-
-    def toBytes(bases: String): Array[Byte] = {
-      val result = new Array[Byte](bases.length)
-      for (i <- 0 until bases.length) {
-        result(i) = toByte(bases(i))
-      }
-      result
-    }
-
-    def toByte(symbol: Char): Byte = {
-      symbol match {
-        case 'A' => 0
-        case 'C' => 1
-        case 'G' => 2
-        case 'T' => 3
-        case '$' => 4
-        case _ => throw new IllegalArgumentException(s"unknown symbol $symbol")
-      }
-    }
-
-    def toBase(byte: Byte): Char = {
-      byte match {
-        case 0 => 'A'
-        case 1 => 'C'
-        case 2 => 'G'
-        case 3 => 'T'
-        case 4 => '$'
-        case _ => throw new IllegalArgumentException(s"unknown byte $byte")
-      }
-    }
-
   }
 
 }

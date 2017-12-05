@@ -2,7 +2,7 @@ package A1
 
 import scala.collection.mutable
 
-object A1_1_PatternsToTrie {
+private object A1_1_PatternsToTrie {
 
   case class IndexedEdge(from: Int, base: Char, to: Int)
 
