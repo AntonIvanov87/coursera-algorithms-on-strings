@@ -2,7 +2,7 @@ package A2
 
 import common.BaseCodec
 
-class SortedColumn private (private val byteToFirstIndex: Array[Integer]) {
+private class SortedColumn private (private val byteToFirstIndex: Array[Integer]) {
 
   def apply(i: Int): Char = {
     var prevByte: Byte = 0
@@ -25,7 +25,7 @@ class SortedColumn private (private val byteToFirstIndex: Array[Integer]) {
 
 }
 
-object SortedColumn {
+private object SortedColumn {
 
   def apply(text: String): SortedColumn = {
     val byteToFirstIndex = getByteToFirstIndex(text)

@@ -29,7 +29,7 @@ class A1_5_ShortestSubstringTest extends TestBase {
 
   test("CCAAGCTGCTAGAGG CATGCTGGGCTGGCT") {
     val shortest = shortestSubstringOfANotInB("CCAAGCTGCTAGAGG", "CATGCTGGGCTGGCT").get
-    assert(Set("AA", "AG", "CC", "GA") contains shortest)
+    assert(Set("AA", "AG", "CC", "GA", "TA") contains shortest)
   }
 
   test("ATGCGATGACCTGACTGA CTCAACGTATTGGCCAGA") {
