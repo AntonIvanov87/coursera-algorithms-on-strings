@@ -1,9 +1,7 @@
 package A3
 
-import java.util.concurrent.atomic.LongAdder
-
-import util.TestBase
-import A3_1_KMP.find
+import A3.A3_1_KMP.find
+import util.{Stats, TestBase}
 
 class A3_1_KMPTest extends TestBase {
 
@@ -20,25 +18,18 @@ class A3_1_KMPTest extends TestBase {
   }
 
   test("check") {
-    implicit val generatorDrivenConfig: PropertyCheckConfiguration = propCheckConfig(100)
+    implicit val generatorDrivenConfig: PropertyCheckConfiguration = propCheckConfig(minSuccesses = 100)
 
     val patternGen = TestBase.textGen(100)
     val textGen = TestBase.textGen(1000000)
 
-    val iteration = new LongAdder
-    val totalTimeMillis = new LongAdder
+    val stats = new Stats(skipFirstDurations = 10)
     forAll((patternGen, "pattern"), (textGen, "text")) { (pattern: String, text: String) =>
-      val start = System.currentTimeMillis
+      val start = System.nanoTime()
 
       val patternIndices = find(pattern, text)
 
-      iteration.increment()
-      val msPerIter = if (iteration.intValue() >= 10) {
-        totalTimeMillis.add(System.currentTimeMillis - start)
-        totalTimeMillis.longValue() / (iteration.longValue() - 9)
-      } else {
-        0
-      }
+      stats.addDuration(start)
 
       if (patternIndices.isEmpty) {
         assert(!text.contains(pattern))
@@ -48,7 +39,7 @@ class A3_1_KMPTest extends TestBase {
         }
       }
 
-      println(s"Done $iteration of ${generatorDrivenConfig.minSuccessful.value}, $msPerIter ms/iter avg., ${text.length} symbols in text, ${pattern.length} symbols in pattern, found ${patternIndices.length}")
+      println(s"Done ${stats.count} of ${generatorDrivenConfig.minSuccessful.value}, ${stats.avgMs} ms/iter avg., ${text.length} symbols in text, ${pattern.length} symbols in pattern, found ${patternIndices.length}")
     }
   }
 

@@ -1,10 +1,8 @@
 package A2
 
-import java.util.concurrent.atomic.LongAdder
-
-import util.TestBase
-import A2_3_BetterBWMatching._
+import A2.A2_3_BetterBWMatching._
 import org.scalacheck.Gen
+import util.{Stats, TestBase}
 
 class A2_3_BetterBWMatchingTest extends TestBase {
 
@@ -22,7 +20,7 @@ class A2_3_BetterBWMatchingTest extends TestBase {
 
   test("check") {
 
-    implicit val generatorDrivenConfig: PropertyCheckConfiguration = propCheckConfig(10)
+    implicit val generatorDrivenConfig: PropertyCheckConfiguration = propCheckConfig(minSuccesses = 10)
 
     val textGen = TestBase.textGen(1000000)
     val patternGen = TestBase.textGen(1000)
@@ -32,27 +30,23 @@ class A2_3_BetterBWMatchingTest extends TestBase {
       patterns <- Gen.containerOfN[Array, String](size, patternGen)
     } yield patterns
 
-    val iteration = new LongAdder
-    val totalTimeMillis = new LongAdder
+    val stats = new Stats(skipFirstDurations = 3)
     forAll((textGen, "text"), (patternsGen, "patterns")) { (text: String, patterns: Array[String]) =>
-      val start = System.currentTimeMillis
 
       val bwtText = A2_1_BWT.bwt(text + '$')
+
+      val start = System.nanoTime()
+
       val patternIToCount = bwMatch(bwtText, patterns)
+
+      stats.addDuration(start)
 
       for (i <- patterns.indices) {
         val pattern = patterns(i)
         assert(patternIToCount(i) === A2_3_BetterBWMatchingTest.countOfSubstring(text, pattern))
       }
 
-      iteration.increment()
-      val msPerIter = if (iteration.intValue() >= 3) {
-        totalTimeMillis.add(System.currentTimeMillis - start)
-        totalTimeMillis.longValue() / (iteration.longValue() - 2)
-      } else {
-        0
-      }
-      println(s"Done $iteration of ${generatorDrivenConfig.minSuccessful.value}, $msPerIter ms/iter avg., ${text.size} symbols in text, ${patterns.size} patterns")
+      println(s"Done ${stats.count} of ${generatorDrivenConfig.minSuccessful.value}, ${stats.avgMs} ms/iter avg., ${text.length} symbols in text, ${patterns.length} patterns")
     }
   }
 

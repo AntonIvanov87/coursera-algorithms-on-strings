@@ -1,9 +1,7 @@
 package A1
 
-import java.util.concurrent.atomic.LongAdder
-
 import A1.A1_4_SuffixTrie._
-import util.TestBase
+import util.{Stats, TestBase}
 
 class A1_4_SuffixTrieTest extends TestBase {
 
@@ -57,28 +55,22 @@ class A1_4_SuffixTrieTest extends TestBase {
   }
 
   test("check") {
-    implicit val generatorDrivenConfig: PropertyCheckConfiguration = propCheckConfig(1000)
+    implicit val generatorDrivenConfig: PropertyCheckConfiguration = propCheckConfig(minSuccesses = 300)
 
     val textGen = TestBase.textGen(5000)
 
-    val iteration = new LongAdder
-    val totalTimeMillis = new LongAdder
+    val stats = new Stats(skipFirstDurations = 100)
     forAll((textGen, "text")) { (genedText: String) =>
       val text = genedText + '$'
 
-      val start = System.currentTimeMillis
+      val start = System.nanoTime
 
       val suffixTrie = new SuffixTrie(text)
       assertTrieHasAllSuffixes(suffixTrie, text)
 
-      iteration.increment()
-      val msPerIter = if (iteration.intValue() >= 200) {
-        totalTimeMillis.add(System.currentTimeMillis - start)
-        totalTimeMillis.longValue() / (iteration.longValue() - 199)
-      } else {
-        0
-      }
-      println(s"Done $iteration of ${generatorDrivenConfig.minSuccessful.value}, $msPerIter ms/iter avg., ${text.size} symbols in text")
+      stats.addDuration(start)
+
+      println(s"Done ${stats.count} of ${generatorDrivenConfig.minSuccessful.value}, ${stats.avgMs} ms/iter avg., ${text.length} symbols in text")
     }
   }
 

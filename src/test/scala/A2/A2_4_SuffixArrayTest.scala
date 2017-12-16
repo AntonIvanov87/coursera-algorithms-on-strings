@@ -1,9 +1,7 @@
 package A2
 
-import java.util.concurrent.atomic.LongAdder
-
 import A2.A2_4_SuffixArray.sortedStartIndices
-import util.TestBase
+import util.{Stats, TestBase}
 
 class A2_4_SuffixArrayTest extends TestBase {
 
@@ -20,17 +18,18 @@ class A2_4_SuffixArrayTest extends TestBase {
   }
 
   test("check") {
-    implicit val generatorDrivenConfig: PropertyCheckConfiguration = propCheckConfig(1000)
+    implicit val generatorDrivenConfig: PropertyCheckConfiguration = propCheckConfig(minSuccesses = 1000)
     val textGen = TestBase.textGen(10000)
 
-    val iteration = new LongAdder
-    val totalTimeNs = new LongAdder
+    val stats = new Stats(skipFirstDurations = 400)
     forAll((textGen, "text")) { (gened: String) =>
       val text = gened + '$'
 
       val start = System.nanoTime
 
       val suffixStartIndicies = sortedStartIndices(text)
+
+      stats.addDuration(start)
 
       var prevSuffix = text.substring(suffixStartIndicies(0))
       for(i <- 1 until suffixStartIndicies.length) {
@@ -39,14 +38,7 @@ class A2_4_SuffixArrayTest extends TestBase {
         prevSuffix = curSuffix
       }
 
-      iteration.increment()
-      val msPerIter = if (iteration.intValue() >= 400) {
-        totalTimeNs.add(System.nanoTime - start)
-        totalTimeNs.longValue() / (iteration.longValue() - 399) / (1000 * 1000)
-      } else {
-        0
-      }
-      println(s"Done $iteration of ${generatorDrivenConfig.minSuccessful.value}, $msPerIter ms/iter avg., ${text.length} symbols in text")
+      println(s"Done ${stats.count} of ${generatorDrivenConfig.minSuccessful.value}, ${stats.avgMs} ms/iter avg., ${text.length} symbols in text")
     }
   }
 }

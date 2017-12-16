@@ -1,9 +1,7 @@
 package A1
 
-import java.util.concurrent.atomic.LongAdder
-
 import A1.A1_5_ShortestSubstring.shortestSubstringOfANotInB
-import util.TestBase
+import util.{Stats, TestBase}
 
 class A1_5_ShortestSubstringTest extends TestBase {
 
@@ -38,15 +36,17 @@ class A1_5_ShortestSubstringTest extends TestBase {
   }
 
   test("check") {
-    implicit val generatorDrivenConfig: PropertyCheckConfiguration = propCheckConfig(1000)
+    implicit val generatorDrivenConfig: PropertyCheckConfiguration = propCheckConfig(minSuccesses = 2000)
     val textGen = TestBase.textGen(2000)
 
-    val iteration = new LongAdder
-    val totalTimeMillis = new LongAdder
+    val stats = new Stats(skipFirstDurations = 200)
     forAll((textGen, "text A"), (textGen, "text B")) { (textA: String, textB: String) =>
-      val start = System.currentTimeMillis
+      val start = System.nanoTime
 
       val shortestOption = shortestSubstringOfANotInB(textA, textB)
+
+      stats.addDuration(start)
+
       if (shortestOption.isEmpty) {
         assert(textB contains textA)
       } else {
@@ -61,14 +61,7 @@ class A1_5_ShortestSubstringTest extends TestBase {
         }
       }
 
-      iteration.increment()
-      val msPerIter = if (iteration.intValue() >= 200) {
-        totalTimeMillis.add(System.currentTimeMillis - start)
-        totalTimeMillis.longValue() / (iteration.longValue() - 199)
-      } else {
-        0
-      }
-      println(s"Done $iteration of ${generatorDrivenConfig.minSuccessful.value}, $msPerIter ms/iter avg., ${textA.size} symbols in A, ${textB.size} in text B")
+      println(s"Done ${stats.count} of ${generatorDrivenConfig.minSuccessful.value}, ${stats.avgMs} ms/iter avg., ${textA.length} symbols in A, ${textB.length} in text B")
     }
   }
 

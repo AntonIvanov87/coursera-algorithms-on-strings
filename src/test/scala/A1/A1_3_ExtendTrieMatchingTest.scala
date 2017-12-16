@@ -1,10 +1,8 @@
 package A1
 
-import java.util.concurrent.atomic.LongAdder
-
 import A1.A1_2_TrieMatching._
 import org.scalacheck.Gen
-import util.TestBase
+import util.{Stats, TestBase}
 
 class A1_3_ExtendTrieMatchingTest extends TestBase {
 
@@ -24,7 +22,7 @@ class A1_3_ExtendTrieMatchingTest extends TestBase {
   }
 
   test("check") {
-    implicit val generatorDrivenConfig: PropertyCheckConfiguration = propCheckConfig(1000)
+    implicit val generatorDrivenConfig: PropertyCheckConfiguration = propCheckConfig(minSuccesses = 300)
 
     val textGen = TestBase.textGen(10000)
     val patternGen = TestBase.textGen(100)
@@ -34,12 +32,13 @@ class A1_3_ExtendTrieMatchingTest extends TestBase {
       patterns <- Gen.listOfN(size, patternGen)
     } yield patterns
 
-    val iteration = new LongAdder
-    val totalTimeMillis = new LongAdder
+    val stats = new Stats(skipFirstDurations = 100)
     forAll((textGen, "text"), (patternsGen, "patterns")) { (text: String, patterns: List[String]) =>
-      val start = System.currentTimeMillis
+      val start = System.nanoTime
 
       val patternsToIndexes = getPatternToIndexes(text, patterns)
+
+      stats.addDuration(start)
 
       for ((pattern, indexes) <- patternsToIndexes) {
         for (index <- indexes) {
@@ -52,14 +51,7 @@ class A1_3_ExtendTrieMatchingTest extends TestBase {
         assert(!text.contains(patternNotInText))
       }
 
-      iteration.increment()
-      val msPerIter = if (iteration.intValue() >= 200) {
-        totalTimeMillis.add(System.currentTimeMillis - start)
-        totalTimeMillis.longValue() / (iteration.longValue() - 199)
-      } else {
-        0
-      }
-      println(s"Done $iteration of ${generatorDrivenConfig.minSuccessful.value}, $msPerIter ms/iter avg., ${text.size} symbols in text, ${patterns.size} patterns")
+      println(s"Done ${stats.count} of ${generatorDrivenConfig.minSuccessful.value}, ${stats.avgMs} ms/iter avg., ${text.length} symbols in text, ${patterns.size} patterns")
     }
   }
 }
