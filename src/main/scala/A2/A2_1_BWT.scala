@@ -24,6 +24,4 @@ private object A2_1_BWT {
     String.valueOf(bwtChars)
   }
 
-
-
 }

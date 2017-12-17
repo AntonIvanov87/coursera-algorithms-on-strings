@@ -2,7 +2,7 @@ package A2
 
 import common.BaseCodec
 
-private object A2_4_SuffixArray {
+object A2_4_SuffixArray {
 
   def sortedStartIndices(text: String): Array[Int] = {
     val startIndices = new Array[Int](text.length)
