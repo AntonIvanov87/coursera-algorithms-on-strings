@@ -74,7 +74,7 @@ private object A3_2_SuffixArray {
     sortedStartIDoubled
   }
 
-  def updateStartIToClass(prevStartIToClass: Array[Int], startIndices: Array[Int], suffixLen: Int): Array[Int] = {
+  private def updateStartIToClass(prevStartIToClass: Array[Int], startIndices: Array[Int], suffixLen: Int): Array[Int] = {
     val updatedStartIToClass = new Array[Int](prevStartIToClass.length)
     updatedStartIToClass(startIndices(0)) = 0
     for (i <- 1 until startIndices.length) {

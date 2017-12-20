@@ -9,7 +9,7 @@ trait TestBase extends FunSuite with GeneratorDrivenPropertyChecks {
 
   implicit val noShrink: Shrink[String] = Shrink.shrinkAny
 
-  def propCheckConfig(minSuccesses: Int): PropertyCheckConfiguration = {
+  protected def propCheckConfig(minSuccesses: Int): PropertyCheckConfiguration = {
     PropertyCheckConfiguration(
       minSuccessful = PosInt.from(minSuccesses).get,
       workers = PosInt.from(Runtime.getRuntime.availableProcessors).get
@@ -20,14 +20,25 @@ trait TestBase extends FunSuite with GeneratorDrivenPropertyChecks {
 
 object TestBase {
 
-  val bases = Set('A', 'C', 'G', 'T')
+  private val bases = Set('A', 'C', 'G', 'T')
 
   def textGen(max: Int): Gen[String] = {
-    val baseGen = Gen.oneOf(bases.toSeq)
+    val baseGen = newBaseGen()
     for {
       size <- Gen.choose(1, max)
       text <- Gen.listOfN(size, baseGen)
     } yield text.mkString
+  }
+
+  def newFixedSizeTextGen(size: Int): Gen[String] = {
+    val baseGen = Gen.oneOf(bases.toSeq)
+    for {
+      text <- Gen.listOfN(size, baseGen)
+    } yield text.mkString
+  }
+
+  private def newBaseGen(): Gen[Char] = {
+    Gen.oneOf(bases.toSeq)
   }
 
 }
